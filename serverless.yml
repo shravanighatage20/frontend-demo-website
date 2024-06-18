@@ -3,7 +3,7 @@ service: shravani-static-website
 provider:
   name: aws
   runtime: nodejs18.x
-  region: ca-central-1 
+  region: ca-central-1
   iamRoleStatements:
     - Effect: "Allow"
       Action:
@@ -18,8 +18,8 @@ provider:
         - "s3:ListBucketVersions"
         - "s3:GetBucketPolicy"
       Resource:
-        - "arn:aws:s3:::shravani-angular-bucket"
-        - "arn:aws:s3:::shravani-angular-bucket/*"
+        - "arn:aws:s3:::${self:custom.bucketName}"
+        - "arn:aws:s3:::${self:custom.bucketName}/*"
     - Effect: "Allow"
       Action:
         - "cloudformation:CreateStack"
@@ -38,26 +38,25 @@ plugins:
   - serverless-s3-sync
 
 custom:
-  s3Sync:
-    - bucketName: shravani-angular-bucket
-      localDir: dist/frontend-demo-website
+  bucketName: shravani-angular-bucket
 
 resources:
   Resources:
     WebsiteBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: shravani-angular-bucket
+        BucketName: ${self:custom.bucketName}
         WebsiteConfiguration:
           IndexDocument: index.html
           ErrorDocument: index.html
     WebsiteBucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
-        Bucket: { Ref: WebsiteBucket }
+        Bucket: !Ref WebsiteBucket
         PolicyDocument:
+          Version: "2012-10-17"
           Statement:
             - Effect: Allow
-              Principal: '*'
-              Action: 's3:GetObject'
-              Resource: arn:aws:s3:::shravani-angular-bucket/*
+              Principal: "*"
+              Action: "s3:GetObject"
+              Resource: "arn:aws:s3:::${self:custom.bucketName}/*"
