@@ -4,6 +4,35 @@ provider:
   name: aws
   runtime: nodejs18.x
   region: ca-central-1 
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action:
+        - "s3:CreateBucket"
+        - "s3:DeleteBucket"
+        - "s3:GetBucketLocation"
+        - "s3:ListBucket"
+        - "s3:PutBucketPolicy"
+        - "s3:PutObject"
+        - "s3:DeleteObject"
+        - "s3:GetObject"
+        - "s3:ListBucketVersions"
+        - "s3:GetBucketPolicy"
+      Resource:
+        - "arn:aws:s3:::shravani-angular-bucket"
+        - "arn:aws:s3:::shravani-angular-bucket/*"
+    - Effect: "Allow"
+      Action:
+        - "cloudformation:CreateStack"
+        - "cloudformation:DeleteStack"
+        - "cloudformation:DescribeStackResources"
+        - "cloudformation:DescribeStacks"
+        - "cloudformation:GetTemplateSummary"
+        - "cloudformation:UpdateStack"
+      Resource: "*"
+    - Effect: "Allow"
+      Action:
+        - "iam:PassRole"
+      Resource: "*"
 
 plugins:
   - serverless-s3-sync
