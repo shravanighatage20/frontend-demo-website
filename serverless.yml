@@ -1,0 +1,34 @@
+service: shravani-static-website
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  region: ca-central-1 
+
+plugins:
+  - serverless-s3-sync
+
+custom:
+  s3Sync:
+    - bucketName: shravani-angular-bucket
+      localDir: dist/frontend-demo-website
+
+resources:
+  Resources:
+    WebsiteBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: shravani-angular-bucket
+        WebsiteConfiguration:
+          IndexDocument: index.html
+          ErrorDocument: index.html
+    WebsiteBucketPolicy:
+      Type: AWS::S3::BucketPolicy
+      Properties:
+        Bucket: { Ref: WebsiteBucket }
+        PolicyDocument:
+          Statement:
+            - Effect: Allow
+              Principal: '*'
+              Action: 's3:GetObject'
+              Resource: arn:aws:s3:::shravani-angular-bucket/*
