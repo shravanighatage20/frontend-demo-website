@@ -39,6 +39,7 @@ plugins:
 
 custom:
   bucketName: shravani-angular-bucket
+  iamUserArn: arn:aws:iam::839728096237:user/shravani_serverless
 
 resources:
   Resources:
@@ -57,6 +58,7 @@ resources:
           Version: "2012-10-17"
           Statement:
             - Effect: Allow
-              Principal: "*"
+              Principal:
+                AWS: ${self:custom.iamUserArn}
               Action: "s3:GetObject"
               Resource: "arn:aws:s3:::${self:custom.bucketName}/*"
