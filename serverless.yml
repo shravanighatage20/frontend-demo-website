@@ -1,62 +1,44 @@
 service: shravani-static-website
 
+frameworkVersion: '3'
 provider:
   name: aws
   runtime: nodejs18.x
   region: ca-central-1
-  iamRoleStatements:
-    - Effect: "Allow"
-      Action:
-        - "s3:CreateBucket"
-        - "s3:DeleteBucket"
-        - "s3:GetBucketLocation"
-        - "s3:ListBucket"
-        - "s3:PutBucketPolicy"
-        - "s3:PutObject"
-        - "s3:DeleteObject"
-        - "s3:GetObject"
-        - "s3:ListBucketVersions"
-        - "s3:GetBucketPolicy"
-      Resource:
-        - "arn:aws:s3:::${self:custom.bucketName}"
-        - "arn:aws:s3:::${self:custom.bucketName}/*"
-    - Effect: "Allow"
-      Action:
-        - "cloudformation:CreateStack"
-        - "cloudformation:DeleteStack"
-        - "cloudformation:DescribeStackResources"
-        - "cloudformation:DescribeStacks"
-        - "cloudformation:GetTemplateSummary"
-        - "cloudformation:UpdateStack"
-        - logs:CreateLogStream
-        - logs:CreateLogGroup
-        - logs:PutLogEvents
-      Resource: "*"
-    - Effect: "Allow"
-      Action:
-        - "iam:PassRole"
-      Resource: "*"
-
-plugins:
-  - serverless-s3-sync
-
-custom:
-  bucketName: shravani-angular-bucket
-  s3Sync:
-    buckets:
-      - bucketName: ${self:custom.bucketName}
-        localDir: dist
-
+  stage: dev
+  environment:
+    WEBSITE_BUCKET_NAME: ${self:custom.websiteBucketName}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObject
+            - s3:PutObjectACL
+            - s3:PutBucketPolicy
+          Resource:
+            - arn:aws:s3:::${self:custom.websiteBucketName}/*
+        - Effect: Allow
+          Action:
+            - cloudfront:CreateDistribution
+            - cloudfront:UpdateDistribution
+          Resource: "*"
 resources:
   Resources:
     WebsiteBucket:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: ${self:custom.bucketName}
+        BucketName: ${self:custom.websiteBucketName}
         WebsiteConfiguration:
           IndexDocument: index.html
-          ErrorDocument: index.html
-    
+          ErrorDocument: error.html
+    CloudFrontOAI:
+      Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+      Properties:
+        CloudFrontOriginAccessIdentityConfig:
+          Comment: Access to ${self:custom.websiteBucketName}
     WebsiteBucketPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:
@@ -65,13 +47,40 @@ resources:
           Version: "2012-10-17"
           Statement:
             - Effect: Allow
-              Principal: "*"
+              Principal:
+                CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
               Action: "s3:GetObject"
-              Resource: "arn:aws:s3:::${self:custom.bucketName}/*"
-            - Effect: Allow
-              Principal: "*"
-              Action: "s3:ListBucket"
-              Resource: "arn:aws:s3:::${self:custom.bucketName}"
+              Resource: "arn:aws:s3:::${self:custom.websiteBucketName}/*"
+    CloudFrontDistribution:
+      Type: AWS::CloudFront::Distribution
+      Properties:
+        DistributionConfig:
+          Enabled: true
+          Origins:
+            - DomainName: !Sub "${self:custom.websiteBucketName}.s3.${self:provider.region}.amazonaws.com"
+              Id: S3Origin
+              S3OriginConfig:
+                OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CloudFrontOAI}"
+          DefaultCacheBehavior:
+            TargetOriginId: S3Origin
+            ViewerProtocolPolicy: redirect-to-https
+            AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            CachedMethods:
+              - GET
+              - HEAD
+            ForwardedValues:
+              QueryString: false
+              Cookies:
+                Forward: none
+          DefaultRootObject: index.html
+          ViewerCertificate:
+            CloudFrontDefaultCertificate: true
+          PriceClass: PriceClass_100
+custom:
+  websiteBucketName: shravani-static-website
 
 
 # service: shravani-static-website
