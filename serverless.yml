@@ -28,9 +28,13 @@ provider:
         - "cloudformation:DescribeStacks"
         - "cloudformation:GetTemplateSummary"
         - "cloudformation:UpdateStack"
-        - "logs:CreateLogStream"
-        - "logs:CreateLogGroup"
-        - "logs:PutLogEvents"
+        - logs:CreateLogStream
+        - logs:CreateLogGroup
+        - logs:PutLogEvents
+      Resource: "*"
+    - Effect: "Allow"
+      Action:
+        - "iam:PassRole"
       Resource: "*"
 
 plugins:
@@ -65,7 +69,6 @@ resources:
               Principal: "*"
               Action: "s3:GetObject"
               Resource: "arn:aws:s3:::${self:custom.bucketName}/*"
-
 
 
 # service: shravani-static-website
