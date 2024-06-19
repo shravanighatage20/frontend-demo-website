@@ -71,6 +71,7 @@ resources:
               Resource: "arn:aws:s3:::${self:custom.bucketName}/*"
 
 
+
 # service: shravani-static-website
 
 # provider:
