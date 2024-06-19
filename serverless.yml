@@ -1,6 +1,7 @@
 service: shravani-static-website
 
-frameworkVersion: '3'
+frameworkVersion: '2'
+
 provider:
   name: aws
   runtime: nodejs18.x
