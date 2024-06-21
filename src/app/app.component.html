@@ -1,37 +1,35 @@
-<body ng-app="studentApp">
-  <div class="container" ng-controller="StudentController">
-      <h1>Student Information</h1>
-      <div class="form-container">
-          <h2>Add / Update Student</h2>
-          <form ng-submit="addOrUpdateStudent()">
-              <label for="prn">PRN:</label><br>
-              <input type="text" id="prn" ng-model="student.prn" required><br>
-              <label for="name">Name:</label><br>
-              <input type="text" id="name" ng-model="student.name" required><br>
-              <label for="age">Age:</label><br>
-              <input type="number" id="age" ng-model="student.age" required><br>
-              <label for="class">Class:</label><br>
-              <input type="text" id="class" ng-model="student.class" required><br>
-              <button type="submit">Submit</button>
-          </form>
-      </div>
-
-      <div class="operations-container">
-          <h2>Get / Delete Student</h2>
-          <form ng-submit="getStudent()">
-              <label for="prn-get">PRN:</label><br>
-              <input type="text" id="prn-get" ng-model="prnForOperation" required>
-              <button type="submit">Get Student</button>
-              <button type="button" ng-click="deleteStudent()">Delete Student</button>
-          </form>
-      </div>
-
-      <div class="student-details" ng-if="selectedStudent">
-          <h3>Student Details:</h3>
-          <!-- <p><strong>PRN:</strong> {{selectedStudent.prn}}</p>
-          <p><strong>Name:</strong> {{selectedStudent.name}}</p>
-          <p><strong>Age:</strong> {{selectedStudent.age}}</p>
-          <p><strong>Class:</strong> {{selectedStudent.class}}</p> -->
-      </div>
+<div class="container">
+  <h1>Student Information</h1>
+  <div class="form-container">
+    <h2>Add / Update Student</h2>
+    <form [formGroup]="studentForm" (ngSubmit)="addOrUpdateStudent()">
+      <label for="prn">PRN:</label>
+      <input type="text" id="prn" formControlName="prn" required>
+      <label for="name">Name:</label>
+      <input type="text" id="name" formControlName="name" required>
+      <label for="age">Age:</label>
+      <input type="number" id="age" formControlName="age" required>
+      <label for="class">Class:</label>
+      <input type="text" id="class" formControlName="class" required>
+      <button type="submit">Submit</button>
+    </form>
   </div>
-</body>
+
+  <div class="operations-container">
+    <h2>Get / Delete Student</h2>
+    <form [formGroup]="operationForm" (ngSubmit)="getStudent()">
+      <label for="prn-get">PRN:</label>
+      <input type="text" id="prn-get" formControlName="prnForOperation" required>
+      <button type="submit">Get Student</button>
+      <button type="button" (click)="deleteStudent()">Delete Student</button>
+    </form>
+  </div>
+
+  <div class="student-details" *ngIf="selectedStudent">
+    <h3>Student Details:</h3>
+    <p><strong>PRN:</strong> {{selectedStudent.prn}}</p>
+    <p><strong>Name:</strong> {{selectedStudent.name}}</p>
+    <p><strong>Age:</strong> {{selectedStudent.age}}</p>
+    <p><strong>Class:</strong> {{selectedStudent.class}}</p>
+  </div>
+</div>
