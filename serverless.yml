@@ -86,10 +86,10 @@ plugins:
   - serverless-s3-sync
 
 custom:
-  bucketName: shravani-static-website
+  websiteBucketName: shravani-static-website
   s3Sync:
     buckets:
-      - bucketName: ${self:custom.bucketName}
+      - bucketName: ${self:custom.websiteBucketName}
         localDir: dist/frontend-demo-website/browser
 # provider:
 #   name: aws
