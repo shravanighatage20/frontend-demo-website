@@ -86,7 +86,7 @@ plugins:
   - serverless-s3-sync
 
 custom:
-  websiteBucketName: shravani-static-website
+  bucketName: shravani-static-website
   s3Sync:
     buckets:
       - bucketName: ${self:custom.bucketName}
