@@ -53,11 +53,6 @@ resources:
                 CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
               Action: "s3:GetObject"
               Resource: "arn:aws:s3:::${self:custom.websiteBucketName}/*"
-            - Effect: Allow
-              Principal: "*"
-              Action:
-                - s3:GetObject
-              Resource: "arn:aws:s3:::${self:custom.websiteBucketName}/index.html"
     CloudFrontDistribution:
       Type: AWS::CloudFront::Distribution
       Properties:
@@ -89,6 +84,95 @@ resources:
 
 custom:
   websiteBucketName: shravani-static-website
+
+
+# provider:
+#   name: aws
+#   runtime: nodejs18.x
+#   region: ca-central-1
+#   stage: dev
+#   environment:
+#     WEBSITE_BUCKET_NAME: ${self:custom.websiteBucketName}
+#   iam:
+#     role:
+#       statements:
+#         - Effect: Allow
+#           Action:
+#             - s3:PutObject
+#             - s3:GetObject
+#             - s3:DeleteObject
+#             - s3:PutObjectACL
+#             - s3:PutBucketPolicy
+#           Resource:
+#             - arn:aws:s3:::${self:custom.websiteBucketName}/*
+#         - Effect: Allow
+#           Action:
+#             - cloudfront:CreateDistribution
+#             - cloudfront:UpdateDistribution
+#           Resource: "*"
+
+# resources:
+#   Resources:
+#     WebsiteBucket:
+#       Type: AWS::S3::Bucket
+#       Properties:
+#         BucketName: ${self:custom.websiteBucketName}
+#         WebsiteConfiguration:
+#           IndexDocument: index.html
+#           ErrorDocument: error.html
+#     CloudFrontOAI:
+#       Type: AWS::CloudFront::CloudFrontOriginAccessIdentity
+#       Properties:
+#         CloudFrontOriginAccessIdentityConfig:
+#           Comment: Access to ${self:custom.websiteBucketName}
+#     WebsiteBucketPolicy:
+#       Type: AWS::S3::BucketPolicy
+#       Properties:
+#         Bucket: !Ref WebsiteBucket
+#         PolicyDocument:
+#           Version: "2012-10-17"
+#           Statement:
+#             - Effect: Allow
+#               Principal:
+#                 CanonicalUser: !GetAtt CloudFrontOAI.S3CanonicalUserId
+#               Action: "s3:GetObject"
+#               Resource: "arn:aws:s3:::${self:custom.websiteBucketName}/*"
+#             - Effect: Allow
+#               Principal: "*"
+#               Action:
+#                 - s3:GetObject
+#               Resource: "arn:aws:s3:::${self:custom.websiteBucketName}/index.html"
+#     CloudFrontDistribution:
+#       Type: AWS::CloudFront::Distribution
+#       Properties:
+#         DistributionConfig:
+#           Enabled: true
+#           Origins:
+#             - DomainName: !Sub "${self:custom.websiteBucketName}.s3.${self:provider.region}.amazonaws.com"
+#               Id: S3Origin
+#               S3OriginConfig:
+#                 OriginAccessIdentity: !Sub "origin-access-identity/cloudfront/${CloudFrontOAI}"
+#           DefaultCacheBehavior:
+#             TargetOriginId: S3Origin
+#             ViewerProtocolPolicy: redirect-to-https
+#             AllowedMethods:
+#               - GET
+#               - HEAD
+#               - OPTIONS
+#             CachedMethods:
+#               - GET
+#               - HEAD
+#             ForwardedValues:
+#               QueryString: false
+#               Cookies:
+#                 Forward: none
+#           DefaultRootObject: index.html
+#           ViewerCertificate:
+#             CloudFrontDefaultCertificate: true
+#           PriceClass: PriceClass_100
+
+# custom:
+#   websiteBucketName: shravani-static-website
 
 
 # service: shravani-static-website
