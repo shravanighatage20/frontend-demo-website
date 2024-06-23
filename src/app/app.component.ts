@@ -10,7 +10,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
   standalone: true,
   imports: [
     RouterOutlet,
-    ReactiveFormsModule,  // Import ReactiveFormsModule
+    ReactiveFormsModule,  
     HttpClientModule
   ],
   providers: [StudentService],

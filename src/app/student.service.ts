@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root'
 })
 export class StudentService {
-  private apiUrl = 'YOUR_API_GATEWAY_URL';
+  private apiUrl = 'https://qi2gp0txsa.execute-api.ca-central-1.amazonaws.com/production/shravani-serverless-s3-dynamo-lambda';
 
   constructor(private http: HttpClient) { }
 
