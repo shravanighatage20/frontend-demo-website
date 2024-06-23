@@ -1,35 +1,5 @@
-<div class="container">
-  <h1>Student Information</h1>
-  <div class="form-container">
-    <h2>Add / Update Student</h2>
-    <form [formGroup]="studentForm" (ngSubmit)="addOrUpdateStudent()">
-      <label for="prn">PRN:</label>
-      <input type="text" id="prn" formControlName="prn" required>
-      <label for="name">Name:</label>
-      <input type="text" id="name" formControlName="name" required>
-      <label for="age">Age:</label>
-      <input type="number" id="age" formControlName="age" required>
-      <label for="class">Class:</label>
-      <input type="text" id="class" formControlName="class" required>
-      <button type="submit">Submit</button>
-    </form>
-  </div>
-
-  <div class="operations-container">
-    <h2>Get / Delete Student</h2>
-    <form [formGroup]="operationForm" (ngSubmit)="getStudent()">
-      <label for="prn-get">PRN:</label>
-      <input type="text" id="prn-get" formControlName="prnForOperation" required>
-      <button type="submit">Get Student</button>
-      <button type="button" (click)="deleteStudent()">Delete Student</button>
-    </form>
-  </div>
-
-  <div class="student-details" *ngIf="selectedStudent">
-    <h3>Student Details:</h3>
-    <p><strong>PRN:</strong> {{selectedStudent.prn}}</p>
-    <p><strong>Name:</strong> {{selectedStudent.name}}</p>
-    <p><strong>Age:</strong> {{selectedStudent.age}}</p>
-    <p><strong>Class:</strong> {{selectedStudent.class}}</p>
-  </div>
+<div class="pdf-upload-container">
+  <h2>Upload PDF</h2>
+  <input type="file" (change)="onFileSelected($event)" />
+  <button mat-raised-button color="primary" (click)="uploadPdf()">Upload</button>
 </div>

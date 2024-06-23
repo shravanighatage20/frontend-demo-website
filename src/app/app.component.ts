@@ -1,67 +1,51 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import { StudentService } from './student.service';
-import { NgModule } from '@angular/core';
-import { ReactiveFormsModule } from '@angular/forms';
+import { PdfService } from './pdf.service';
 import { HttpClientModule } from '@angular/common/http';
 import { FormBuilder, FormGroup } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+
 @Component({
   selector: 'app-root',
   standalone: true,
   imports: [
     RouterOutlet,
     ReactiveFormsModule,  
-    HttpClientModule
+    HttpClientModule,
+    FormsModule,
+    CommonModule
   ],
-  providers: [StudentService],
+  providers: [PdfService],
   templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  styleUrls: ['./app.component.css']
 })
 export class AppComponent {
-  studentForm: FormGroup;
-  operationForm: FormGroup;
-  selectedStudent: any;
+  selectedFile: File | null = null;
 
-  constructor(private fb: FormBuilder, private studentService: StudentService) {
-    this.studentForm = this.fb.group({
-      prn: [''],
-      name: [''],
-      age: [''],
-      class: ['']
-    });
+  constructor(private pdfService: PdfService) {}
 
-    this.operationForm = this.fb.group({
-      prnForOperation: ['']
-    });
+  onFileSelected(event: any): void {
+    this.selectedFile = event.target.files[0];
   }
 
-  ngOnInit(): void {}
+  uploadPdf(): void {
+    if (this.selectedFile) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const pdfBase64 = (reader.result as string).split(',')[1];
+        const pdfName = this.selectedFile?.name || 'untitled.pdf';
 
-  addOrUpdateStudent() {
-    this.studentService.addOrUpdateStudent(this.studentForm.value).subscribe(response => {
-      alert('Student information saved successfully.');
-      this.studentForm.reset();
-    }, error => {
-      alert('Error saving student information.');
-    });
-  }
-
-  getStudent() {
-    const prn = this.operationForm.get('prnForOperation')?.value;
-    this.studentService.getStudent(prn).subscribe(response => {
-      this.selectedStudent = response;
-    }, error => {
-      alert('Error fetching student information.');
-    });
-  }
-
-  deleteStudent() {
-    const prn = this.operationForm.get('prnForOperation')?.value;
-    this.studentService.deleteStudent(prn).subscribe(response => {
-      alert('Student deleted successfully.');
-      this.selectedStudent = null;
-    }, error => {
-      alert('Error deleting student information.');
-    });
+        this.pdfService.uploadPdf(pdfBase64, pdfName).subscribe(
+          (response) => {
+            console.log('Upload successful:', response);
+          },
+          (error) => {
+            console.error('Upload failed:', error);
+          }
+        );
+      };
+      reader.readAsDataURL(this.selectedFile);
+    }
   }
 }
