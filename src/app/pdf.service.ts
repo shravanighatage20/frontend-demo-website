@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient,HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 @Injectable({
@@ -23,8 +23,13 @@ export class PdfService {
     return this.http.delete(`${this.baseUrl}/${id}`);
   }
 
-  updatePdf(id: string, pdf: string, pdfName: string): Observable<any> {
-    const body = { pdf, pdfName };
-    return this.http.put(`${this.baseUrl}/${id}`, body);
+  updatePdf(pdfId: string, pdfBase64: string | null, pdfName: string): Observable<any> {
+    const body: any = { pdfName };
+    if (pdfBase64) {
+      body.pdf = pdfBase64;
+    }
+    return this.http.put(`${this.baseUrl}/update/${pdfId}`, body, {
+      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
+    });
   }
 }

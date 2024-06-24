@@ -3,3 +3,10 @@
   <input type="file" (change)="onFileSelected($event)" />
   <button mat-raised-button color="primary" (click)="uploadPdf()">Upload</button>
 </div>
+
+<div class="pdf-update-container">
+  <h2>Update PDF</h2>
+  <input type="text" [(ngModel)]="pdfId" placeholder="Enter PDF ID" />
+  <input type="file" (change)="onFileSelected($event)" />
+  <button (click)="updatePdf()">Update</button>
+</div>

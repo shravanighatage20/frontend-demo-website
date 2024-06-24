@@ -2,7 +2,6 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { PdfService } from './pdf.service';
 import { HttpClientModule } from '@angular/common/http';
-import { FormBuilder, FormGroup } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
@@ -22,6 +21,7 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 })
 export class AppComponent {
   selectedFile: File | null = null;
+  pdfId: string = '';
 
   constructor(private pdfService: PdfService) {}
 
@@ -46,6 +46,28 @@ export class AppComponent {
         );
       };
       reader.readAsDataURL(this.selectedFile);
+    }
+  }
+
+  updatePdf(): void {
+    if (this.selectedFile) {
+      const reader = new FileReader();
+      reader.onload = () => {
+        const pdfBase64 = (reader.result as string).split(',')[1];
+        const pdfName = this.selectedFile?.name || 'untitled.pdf';
+
+        this.pdfService.updatePdf(this.pdfId, pdfBase64, pdfName).subscribe(
+          (response) => {
+            console.log('Update successful:', response);
+          },
+          (error) => {
+            console.error('Update failed:', error);
+          }
+        );
+      };
+      reader.readAsDataURL(this.selectedFile);
+    } else {
+      console.error('No file selected for update');
     }
   }
 }
