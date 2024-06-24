@@ -1,4 +1,4 @@
-<div class="pdf-upload-container">
+<!-- <div class="pdf-upload-container">
   <h2>Upload PDF</h2>
   <input type="file" (change)="onFileSelected($event)" />
   <button mat-raised-button color="primary" (click)="uploadPdf()">Upload</button>
@@ -9,4 +9,28 @@
   <input type="text" [(ngModel)]="pdfId" placeholder="Enter PDF ID" />
   <input type="file" (change)="onFileSelected($event)" />
   <button (click)="updatePdf()">Update</button>
+</div> -->
+
+<div>
+  <h1>Upload PDF</h1>
+
+  <input type="file" (change)="onFileSelected($event)">
+  <button (click)="uploadPdf()">Upload PDF</button>
+
+  <h1>Update PDF</h1>
+  <input type="text" [(ngModel)]="pdfId" placeholder="Enter PDF ID">
+  <input type="file" (change)="onFileSelected($event)" />
+  <button (click)="updatePdf()">Update PDF</button>
+  
+  <h1>Delete PDF</h1>
+  <input type="text" [(ngModel)]="pdfId" placeholder="Enter PDF ID">
+  <button (click)="deletePdf()">Delete PDF</button>
+
+  <h1>Get PDF</h1>
+  <input type="text" [(ngModel)]="pdfId" placeholder="Enter PDF ID">
+  <button (click)="getPdf()">Get PDF</button>
+
+  <div *ngIf="pdfUrl">
+    <p>PDF URL: <a [href]="pdfUrl" target="_blank">{{ pdfUrl }}</a></p>
+  </div>
 </div>
